@@ -4,6 +4,8 @@
 @inject IHttpClientFactory ClientFactory
 @rendermode InteractiveServer
 
+@inject IConfiguration Configuration
+
 <PageTitle>Cat Search</PageTitle>
 
 <div class="container" style="max-width: 600px; margin-top: 50px;">
@@ -42,7 +44,8 @@
 </div>
 
 @code {
-    private const string ApiKey = "";
+    // is replaced with the "secret-file" api key
+    // delete this -> private const string ApiKey = "live_o1UqBxO4bRiy0MCwu7o0RQqBHk66DnggTYRgCCEWvsmIUEEL2G905MaVYiaETuKO";
 
     private string searchTerm = "";
     private string errorMessage = "";
@@ -67,6 +70,10 @@
             var client = ClientFactory.CreateClient();
             
             client.DefaultRequestHeaders.Clear();
+
+            // after running [dotnet user-secrets set "CatApiKey" "api-key-here..."] in the terminal of the project
+            // reference it here using Configuration from injecting "IConfiguration"
+            var ApiKey = Configuration["CatApiKey"];
             client.DefaultRequestHeaders.Add("x-api-key", ApiKey);
             
             var url = $"https://api.thecatapi.com/v1/breeds/search?q={searchTerm}";
